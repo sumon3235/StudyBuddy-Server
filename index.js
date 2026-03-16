@@ -36,7 +36,7 @@ async function run() {
         res.send(result);
     })
 
-    // Get All The Job Data From Database
+    // Get All The assignments From Database
     app.get('/all-assignments', async(req, res) => {
       const cursor = assignmentsCollection.find();
       const result = await cursor.toArray();
@@ -44,7 +44,7 @@ async function run() {
 
     })
 
-    // Get A specific jobData from database
+    // Get A specific assignmet from database
     app.get('/assignments/:id', async(req, res) => {
       const id = req.params.id;
       const filter = {_id: new ObjectId(id)};
@@ -52,7 +52,7 @@ async function run() {
       res.send(result);
     })
 
-    // Update a Specific  jobdata 
+    // Update a Specific  assignmnet 
     app.put('/assignments/:id', async(req, res) => {
       const assignment = req.body;
       const id = req.params.id;
@@ -61,6 +61,14 @@ async function run() {
         $set: {...assignment}
       }
       const result = await assignmentsCollection.updateOne(query,updatedDoc);
+      res.send(result);
+    })
+
+    // Delet a Specific assignment 
+    app.delete('/assignments/:id', async(req, res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)};
+      const result = await assignmentsCollection.deleteOne(query);
       res.send(result);
     })
 
