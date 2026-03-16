@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.5jgflna.mongodb.net/?appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -42,6 +42,26 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
 
+    })
+
+    // Get A specific jobData from database
+    app.get('/assignments/:id', async(req, res) => {
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)};
+      const result = await assignmentsCollection.findOne(filter);
+      res.send(result);
+    })
+
+    // Update a Specific  jobdata 
+    app.put('/assignments/:id', async(req, res) => {
+      const assignment = req.body;
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)};
+         const updatedDoc = {
+        $set: {...assignment}
+      }
+      const result = await assignmentsCollection.updateOne(query,updatedDoc);
+      res.send(result);
     })
 
     // Send a ping to confirm a successful connection
