@@ -38,8 +38,9 @@ async function run() {
 
     // Get All The assignments From Database
     app.get('/all-assignments', async(req, res) => {
-      const cursor = assignmentsCollection.find();
-      const result = await cursor.toArray();
+      const page = parseInt(req.query.page)
+      const size = parseInt(req.query.size)
+      const result = await assignmentsCollection.find().skip(page * size).limit(size).toArray();
       res.send(result);
 
     })
@@ -62,6 +63,12 @@ async function run() {
       }
       const result = await assignmentsCollection.updateOne(query,updatedDoc);
       res.send(result);
+    })
+
+    // Get Estimate Count for Assignment
+    app.get('/count', async(req, res) => {
+      const count = await assignmentsCollection.estimatedDocumentCount();
+      res.send({count})
     })
 
     // Delet a Specific assignment 
